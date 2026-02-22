@@ -1,0 +1,12 @@
+.env
+*.env
+.env.*
+node_modules/
+__pycache__/
+*.pyc
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+!*.tfvars.example
+.DS_Store
