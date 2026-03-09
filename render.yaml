@@ -1,12 +1,13 @@
 services:
   - type: web
     name: stackforge-backend
-    env: python
+    runtime: python
+    plan: free  # <--- ADD THIS LINE TO STAY ON THE FREE TIER
     buildCommand: pip install -r backend/requirements.txt
     startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: GOOGLE_API_KEY
-        sync: false # Set manually in Render Dashboard
+        sync: false
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_KEY
