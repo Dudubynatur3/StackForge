@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://stackforge-backend.onrender.com';
 
 export async function analyseJD(jdText: string, userId?: string) {
   const response = await fetch(`${API_BASE_URL}/analyse/`, {

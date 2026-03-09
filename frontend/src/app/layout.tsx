@@ -27,7 +27,7 @@ export default function RootLayout({
             {children}
           </main>
           <footer className="border-t border-gray-800 py-8 text-center text-sm text-gray-500 bg-black">
-            &copy; {new Date().getFullYear()} StackForge. All rights reserved.
+            &copy; 2026 StackForge. All rights reserved.
           </footer>
         </AuthProvider>
       </body>
