@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from backend.routers import analyse, recommend, implement, upgrade
 
 app = FastAPI(
     title="StackForge API",
@@ -13,10 +14,8 @@ def health_check():
     """
     return {"status": "ok"}
 
-# Placeholder for future router inclusion
-# from .routers import analyse, recommend, implement, upgrade
-#
-# app.include_router(analyse.router)
-# app.include_router(recommend.router)
-# app.include_router(implement.router)
-# app.include_router(upgrade.router)
+# Include routers
+app.include_router(analyse.router)
+app.include_router(recommend.router)
+app.include_router(implement.router)
+app.include_router(upgrade.router)
