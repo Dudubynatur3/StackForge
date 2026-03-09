@@ -90,7 +90,7 @@ export default function RecommendPage() {
                 <div className="p-6 border-l-4 border-blue-600 bg-blue-900/10 rounded-r-xl mb-8">
                   <h4 className="text-xs font-bold uppercase tracking-widest text-blue-400 mb-2">Impact Analysis</h4>
                   <p className="text-gray-300 leading-relaxed italic">
-                    "{project.impact}"
+                    &quot;{project.impact}&quot;
                   </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-6 border-t border-gray-800">

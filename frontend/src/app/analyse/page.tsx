@@ -105,7 +105,7 @@ export default function AnalysePage() {
               {result.recommended_projects?.map((project: any, idx: number) => (
                 <div key={idx} className="p-8 border border-gray-800 rounded-2xl bg-zinc-900 hover:border-blue-500/50 transition-all">
                   <h3 className="text-xl font-bold mb-3">{project.title}</h3>
-                  <p className="text-sm text-gray-400 italic mb-4">"{project.why}"</p>
+                  <p className="text-sm text-gray-400 italic mb-4">&quot;{project.why}&quot;</p>
                   <div className="space-y-4">
                     <div className="text-sm">
                       <span className="text-gray-500 block mb-1">Stack:</span>
