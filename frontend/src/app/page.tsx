@@ -4,7 +4,7 @@ import Link from 'next/link';
 const features = [
   {
     title: "Job Description Analyser",
-    description: "Paste a Cloud/DevOps job description and identify exactly which skills and projects you're missing.",
+    description: "Paste a Cloud/DevOps job description and identify exactly which skills and projects you&apos;re missing.",
     href: "/analyse",
     icon: "🔍",
   },
