@@ -23,6 +23,23 @@ create policy "Users can insert their own profile." on profiles
 create policy "Users can update own profile." on profiles
   for update using (auth.uid() = id);
 
+-- Trigger to create profile on signup
+create function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (id, full_name, avatar_url)
+  values (new.id, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'avatar_url');
+  return new;
+end;
+$$;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+
 -- Job Description Analyses table
 create table analyses (
   id uuid default gen_random_uuid() primary key,
@@ -43,7 +60,7 @@ create policy "Users can insert their own analyses." on analyses
 -- Saved Projects table
 create table saved_projects (
   id uuid default gen_random_uuid() primary key,
-  user_id uuid references auth.users not null,
+  user_id references auth.users not null,
   title text not null,
   description text,
   tech_stack text,

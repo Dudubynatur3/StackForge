@@ -104,16 +104,16 @@ export default function AnalysePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {result.recommended_projects?.map((project: any, idx: number) => (
                 <div key={idx} className="p-8 border border-gray-800 rounded-2xl bg-zinc-900 hover:border-blue-500/50 transition-all">
-                  <h3 className="text-xl font-bold mb-3">{project.title}</h3>
-                  <p className="text-sm text-gray-400 italic mb-4">&quot;{project.why}&quot;</p>
+                  <h3 className="text-xl font-bold mb-3">{project.title || project.name || 'Untitled Project'}</h3>
+                  <p className="text-sm text-gray-400 italic mb-4">&quot;{project.why || project.impact || project.reason || project.description}&quot;</p>
                   <div className="space-y-4">
                     <div className="text-sm">
                       <span className="text-gray-500 block mb-1">Stack:</span>
-                      <span className="text-blue-300">{project.stack}</span>
+                      <span className="text-blue-300">{project.stack || project.tech_stack || project.technologies}</span>
                     </div>
                     <div className="flex justify-between text-xs font-mono uppercase tracking-widest text-gray-500 pt-4 border-t border-gray-800">
-                      <span>{project.time}</span>
-                      <span>{project.difficulty}</span>
+                      <span>{project.time || project.duration || project.estimated_time}</span>
+                      <span>{project.difficulty || project.level}</span>
                     </div>
                   </div>
                 </div>
