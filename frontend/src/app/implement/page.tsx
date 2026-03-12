@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { generateImplementationPlan } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 
-export default function ImplementPage() {
+function ImplementForm() {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
   const [projectTitle, setProjectTitle] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [techStack, setTechStack] = useState('');
@@ -13,8 +15,19 @@ export default function ImplementPage() {
   const [error, setError] = useState<string | null>(null);
   const [plan, setPlan] = useState<any>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Auto-fill if coming from Analyse page
+  useEffect(() => {
+    const title = searchParams.get('title');
+    const stack = searchParams.get('stack');
+    const desc = searchParams.get('desc');
+
+    if (title) setProjectTitle(title);
+    if (stack) setTechStack(stack);
+    if (desc) setProjectDescription(desc);
+  }, [searchParams]);
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!projectTitle.trim()) return;
 
     setLoading(true);
@@ -144,5 +157,13 @@ export default function ImplementPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ImplementPage() {
+  return (
+    <Suspense fallback={<div className="p-20 text-center">Loading...</div>}>
+      <ImplementForm />
+    </Suspense>
   );
 }

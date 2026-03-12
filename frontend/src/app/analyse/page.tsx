@@ -116,6 +116,12 @@ export default function AnalysePage() {
                       <span>{project.time || project.duration || project.estimated_time}</span>
                       <span>{project.difficulty || project.level}</span>
                     </div>
+                    <Link 
+                      href={`/implement?title=${encodeURIComponent(project.title || '')}&stack=${encodeURIComponent(project.stack || '')}&desc=${encodeURIComponent(project.why || '')}`}
+                      className="block w-full mt-6 py-3 px-4 bg-blue-600/10 hover:bg-blue-600 border border-blue-600/30 text-blue-400 hover:text-white text-center rounded-xl text-sm font-bold transition-all"
+                    >
+                      Get Implementation Plan
+                    </Link>
                   </div>
                 </div>
               )) : <div className="text-gray-500 italic">No projects recommended</div>}
