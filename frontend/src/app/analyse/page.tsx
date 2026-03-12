@@ -66,24 +66,24 @@ export default function AnalysePage() {
             <section className="p-8 border border-gray-800 rounded-2xl bg-zinc-900/40">
               <h2 className="text-2xl font-bold mb-6 text-blue-400">Required Skills</h2>
               <ul className="space-y-3">
-                {result.required_skills?.map((skill: string, idx: number) => (
+                {Array.isArray(result.required_skills) ? result.required_skills.map((skill: string, idx: number) => (
                   <li key={idx} className="flex items-center gap-3 text-gray-300">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
                     {skill}
                   </li>
-                ))}
+                )) : <li className="text-gray-500 italic">No specific skills identified</li>}
               </ul>
             </section>
 
             <section className="p-8 border border-gray-800 rounded-2xl bg-zinc-900/40">
               <h2 className="text-2xl font-bold mb-6 text-blue-400">Preferred Skills</h2>
               <ul className="space-y-3">
-                {result.preferred_skills?.map((skill: string, idx: number) => (
+                {Array.isArray(result.preferred_skills) ? result.preferred_skills.map((skill: string, idx: number) => (
                   <li key={idx} className="flex items-center gap-3 text-gray-300">
                     <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
                     {skill}
                   </li>
-                ))}
+                )) : <li className="text-gray-500 italic">No preferred skills identified</li>}
               </ul>
             </section>
           </div>
@@ -91,18 +91,18 @@ export default function AnalysePage() {
           <section className="p-8 border border-gray-800 rounded-2xl bg-zinc-900/40">
             <h2 className="text-2xl font-bold mb-6 text-blue-400">Tools & Technologies</h2>
             <div className="flex flex-wrap gap-3">
-              {result.tools_technologies?.map((tool: string, idx: number) => (
+              {Array.isArray(result.tools_technologies) ? result.tools_technologies.map((tool: string, idx: number) => (
                 <span key={idx} className="px-4 py-2 bg-zinc-800 border border-gray-700 rounded-full text-sm font-medium text-gray-300">
                   {tool}
                 </span>
-              ))}
+              )) : <span className="text-gray-500 italic">No tools identified</span>}
             </div>
           </section>
 
           <section>
             <h2 className="text-2xl font-bold mb-8 text-blue-400">Recommended Projects</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {result.recommended_projects?.map((project: any, idx: number) => (
+              {Array.isArray(result.recommended_projects) ? result.recommended_projects.map((project: any, idx: number) => (
                 <div key={idx} className="p-8 border border-gray-800 rounded-2xl bg-zinc-900 hover:border-blue-500/50 transition-all">
                   <h3 className="text-xl font-bold mb-3">{project.title || project.name || 'Untitled Project'}</h3>
                   <p className="text-sm text-gray-400 italic mb-4">&quot;{project.why || project.impact || project.reason || project.description}&quot;</p>
