@@ -26,6 +26,8 @@ class GeminiService:
         - Tools and technologies
         - Recommended projects
         """
+        print(f"GeminiService: Starting analysis for JD (length: {len(jd_text)})")
+        
         prompt = f"""
         You are an expert Cloud and DevOps Platform Engineer and technical recruiter.
         Analyse the following job description and break it down into four specific categories:
@@ -60,14 +62,18 @@ class GeminiService:
         """
         
         try:
+            print(f"GeminiService: Sending request to model {self.model_name}")
             response = self.model.generate_content(
                 prompt,
                 generation_config={"response_mime_type": "application/json"}
             )
+            print("GeminiService: Response received successfully")
             return json.loads(response.text)
         except json.JSONDecodeError as jde:
+            print(f"GeminiService: JSON Error: {str(jde)}")
             return {"error": f"Failed to parse JSON from AI response: {str(jde)}", "raw": response.text}
         except Exception as e:
+            print(f"GeminiService: General Error: {str(e)}")
             return {"error": str(e)}
 
     async def recommend_projects(self, jd_text: str, current_skills: list = None):
