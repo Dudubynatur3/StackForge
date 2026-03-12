@@ -140,14 +140,14 @@ function ImplementForm() {
           <section className="p-10 border border-gray-800 rounded-3xl bg-zinc-900/40">
             <h2 className="text-2xl font-bold mb-10 text-blue-400 text-center">Implementation Roadmap</h2>
             <div className="space-y-8 max-w-4xl mx-auto">
-              {plan.steps?.map((step: any, idx: number) => (
+              {Array.isArray(plan.steps) ? plan.steps.map((step: any, idx: number) => (
                 <div key={idx} className="relative pl-12 pb-12 last:pb-0 border-l border-gray-800">
                   <div className="absolute left-[-20px] top-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-900/40">
                     {idx + 1}
                   </div>
                   <div className="mb-4">
-                    <span className="text-xs font-bold uppercase tracking-widest text-blue-500 block mb-2">{step.phase}</span>
-                    <h3 className="text-xl font-bold text-white mb-3">{step.action}</h3>
+                    <span className="text-xs font-bold uppercase tracking-widest text-blue-500 block mb-2">{step.phase || 'Implementation Phase'}</span>
+                    <h3 className="text-xl font-bold text-white mb-3">{step.action || 'No action description provided'}</h3>
                   </div>
                   {step.command && (
                     <div className="bg-black p-5 rounded-xl border border-gray-800 group relative">
@@ -157,21 +157,21 @@ function ImplementForm() {
                     </div>
                   )}
                 </div>
-              ))}
+              )) : <div className="text-center py-10 text-gray-500">Plan steps could not be formatted. Please try again.</div>}
             </div>
           </section>
 
           <section className="p-10 border border-gray-800 rounded-3xl bg-blue-900/10 border-blue-900/30">
             <h2 className="text-2xl font-bold mb-6 text-blue-400">Verification Steps</h2>
             <ul className="space-y-4">
-              {plan.verification_steps?.map((v: string, idx: number) => (
+              {Array.isArray(plan.verification_steps) ? plan.verification_steps.map((v: string, idx: number) => (
                 <li key={idx} className="flex items-center gap-4 text-gray-300">
                   <span className="w-6 h-6 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400 text-xs font-bold border border-blue-600/30">
                     ✓
                   </span>
                   {v}
                 </li>
-              ))}
+              )) : <li className="text-gray-500 italic">No verification steps available</li>}
             </ul>
           </section>
         </div>
