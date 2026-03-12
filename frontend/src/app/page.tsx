@@ -1,5 +1,7 @@
-// Vercel deployment trigger - Phase 3 Final Build
+'use client';
+
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 const features = [
   {
@@ -29,6 +31,8 @@ const features = [
 ];
 
 export default function Home() {
+  const { user } = useAuth();
+
   return (
     <div className="flex flex-col items-center justify-center py-20 bg-black text-white">
       {/* Hero Section */}
@@ -40,11 +44,11 @@ export default function Home() {
           StackForge helps Cloud and DevOps engineers build the high-impact portfolios that top tech companies actually hire.
         </p>
         <div className="flex flex-wrap justify-center gap-4">
-          <Link href="/analyse" className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-lg font-bold transition-all shadow-lg shadow-blue-900/40">
-            Get Started Free
+          <Link href={user ? "/dashboard" : "/analyse"} className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-lg font-bold transition-all shadow-lg shadow-blue-900/40">
+            {user ? "Go to Dashboard" : "Get Started Free"}
           </Link>
-          <Link href="/about" className="px-8 py-4 border border-gray-700 hover:bg-gray-800 rounded-lg text-lg font-bold transition-all">
-            Learn More
+          <Link href="/recommend" className="px-8 py-4 border border-gray-700 hover:bg-gray-800 rounded-lg text-lg font-bold transition-all">
+            See Recommendations
           </Link>
         </div>
       </section>

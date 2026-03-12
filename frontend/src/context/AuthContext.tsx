@@ -20,6 +20,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('AuthProvider: isSupabaseConfigured:', isSupabaseConfigured);
+    
     if (!isSupabaseConfigured) {
       console.warn("Supabase is not configured. Auth features will be disabled.");
       setLoading(false);
@@ -27,14 +29,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) console.error('AuthProvider: getSession error:', error.message);
+      console.log('AuthProvider: Initial session:', session ? 'Found' : 'None');
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('AuthProvider: onAuthStateChange event:', event);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -44,19 +49,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
+    console.log('AuthProvider: Attempting signInWithGoogle...');
     if (!isSupabaseConfigured) {
-      alert("Auth is not configured correctly.");
+      alert("Auth is not configured correctly. Check your environment variables.");
       return;
     }
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '',
-      },
-    });
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '',
+        },
+      });
+      if (error) throw error;
+      console.log('AuthProvider: signInWithOAuth redirect initiated', data);
+    } catch (error: any) {
+      console.error('AuthProvider: signInWithGoogle error:', error.message);
+      alert(`Sign in failed: ${error.message}`);
+    }
   };
 
   const signOut = async () => {
+    console.log('AuthProvider: Attempting signOut...');
     if (!isSupabaseConfigured) return;
     await supabase.auth.signOut();
   };
