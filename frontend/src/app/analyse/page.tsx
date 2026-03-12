@@ -20,7 +20,8 @@ export default function AnalysePage() {
     setResult(null);
 
     try {
-      const data = await analyseJD(jdText, user?.id);
+      const currentUserId = user?.id || undefined;
+      const data = await analyseJD(jdText, currentUserId);
       setResult(data.analysis);
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred.');
