@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { analyseJD } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 

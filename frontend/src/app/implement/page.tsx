@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { generateImplementationPlan } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
@@ -14,6 +14,19 @@ function ImplementForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [plan, setPlan] = useState<any>(null);
+
+  const autoGenerate = useCallback(async (t: string, d: string, s: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await generateImplementationPlan(t, d, s, user?.id);
+      setPlan(data.implementation_plan);
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred.');
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.id]);
 
   // Auto-fill and AUTO-TRIGGER if coming from Analyse page
   useEffect(() => {
@@ -31,20 +44,7 @@ function ImplementForm() {
       // Trigger the generation automatically
       autoGenerate(title, d, s);
     }
-  }, [searchParams]);
-
-  const autoGenerate = async (t: string, d: string, s: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await generateImplementationPlan(t, d, s, user?.id);
-      setPlan(data.implementation_plan);
-    } catch (err: any) {
-      setError(err.message || 'An unexpected error occurred.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [searchParams, autoGenerate]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
