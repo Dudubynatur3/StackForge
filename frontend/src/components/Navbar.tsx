@@ -37,6 +37,7 @@ export default function Navbar() {
               </div>
             ) : (
               <button 
+                type="button"
                 onClick={() => signInWithGoogle()}
                 className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-900/20 active:scale-95"
               >
