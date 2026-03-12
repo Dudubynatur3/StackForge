@@ -21,7 +21,7 @@ body {
   background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url('/background.jpeg');
   background-size: cover;
   background-attachment: fixed;
-  background-position: center;
+  background-position: top center;
 }
 
 @layer utilities {
