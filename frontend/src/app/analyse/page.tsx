@@ -117,7 +117,7 @@ export default function AnalysePage() {
                     </div>
                   </div>
                 </div>
-              ))}
+              )) : <div className="text-gray-500 italic">No projects recommended</div>}
             </div>
           </section>
         </div>
