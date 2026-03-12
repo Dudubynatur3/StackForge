@@ -1,15 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Accessing directly from process.env with the NEXT_PUBLIC_ prefix
-// This is the most standard way for Next.js to expose variables to the browser
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// HARD-CODED TEST (Temporary for Proof of Concept)
+// This bypasses Vercel environment variable injection issues
+const url = "https://effxngshznsfhrqgmqpm.supabase.co";
+const key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVmZnhuZ3Noem5zZmhycWdtcXBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1OTc0NDcsImV4cCI6MjA4ODE3MzQ0N30.QsQjryd_czsIjY_vnmglvx9xAaCf0lD577xOFjmAlK4";
 
-// No more placeholders or logic that can hide the error
-// If these are missing, createClient will throw a very specific error we can see
-export const supabase = createClient(
-  url as string, 
-  key as string
-);
+export const supabase = createClient(url, key);
 
-export const isSupabaseConfigured = !!url && !!key;
+export const isSupabaseConfigured = true;
