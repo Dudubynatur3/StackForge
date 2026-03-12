@@ -120,8 +120,11 @@ export default function DashboardPage() {
             <p className="text-sm text-gray-400 mb-6">
               Get unlimited analyses, custom implementation roadmaps, and priority AI access.
             </p>
-            <button className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-bold transition-all">
-              Go Pro
+            <button 
+              onClick={() => alert("Pro Tier Coming Soon! Subscribe to our newsletter for early access.")}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-xl text-sm font-bold transition-all shadow-lg shadow-blue-900/40"
+            >
+              Unlock Unlimited Access
             </button>
           </section>
         </div>

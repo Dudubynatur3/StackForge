@@ -15,6 +15,12 @@ async def generate_implementation_plan(request: ImplementationPlanRequest):
     if not request.project_title:
         raise HTTPException(status_code=400, detail="Project title is required.")
     
+    # Check quota for logged-in users (monthly limit)
+    if request.user_id:
+        can_implement = await supabase_service.check_user_quota(request.user_id, feature="implement")
+        if not can_implement:
+            raise HTTPException(status_code=403, detail="Monthly implementation plan limit reached for free tier. Upgrade to Pro for unlimited plans.")
+
     plan_result = await gemini_service.generate_implementation_plan(
         request.project_title, 
         request.project_description,

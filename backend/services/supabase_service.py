@@ -48,31 +48,38 @@ class SupabaseService:
             print(f"Error fetching history: {e}")
             return []
 
-    async def check_user_quota(self, user_id: str):
+    async def check_user_quota(self, user_id: str, feature: str = "analyse"):
         """
-        Check if the user has reached their daily quota (3 for free tier).
+        Check if the user has reached their quota for a specific feature.
+        Features: 'analyse' (daily), 'implement' (monthly)
         """
-        if not self.client: return True # Default to allowed if no client
+        if not self.client: return True
 
         try:
-            # Get profile tier
             profile = self.client.table('profiles').select('tier').eq('id', user_id).maybe_single().execute()
-            tier = 'free'
-            if profile and profile.data:
-                tier = profile.data.get('tier', 'free')
+            tier = profile.data.get('tier', 'free') if profile.data else 'free'
 
             if tier == 'pro':
-                return True # Unlimited for pro
+                return True
 
-            # Check today's analyses count for free tier
-            from datetime import datetime, date
-            today = date.today().isoformat()
+            from datetime import datetime, date, timedelta
             
-            count = self.client.table('analyses').select('id', count='exact').eq('user_id', user_id).gte('created_at', today).execute()
-            return (count.count or 0) < 3
+            if feature == "analyse":
+                # 3 per day
+                today = date.today().isoformat()
+                count = self.client.table('analyses').select('id', count='exact').eq('user_id', user_id).gte('created_at', today).execute()
+                return (count.count or 0) < 3
+            
+            if feature == "implement":
+                # 1 per month for free tier
+                first_of_month = date.today().replace(day=1).isoformat()
+                count = self.client.table('saved_projects').select('id', count='exact').eq('user_id', user_id).gte('created_at', first_of_month).execute()
+                return (count.count or 0) < 1
+
+            return True
         except Exception as e:
-            print(f"Error checking quota: {e}")
-            return True # Allow if check fails
+            print(f"Error checking quota for {feature}: {e}")
+            return True
 
     async def save_project(self, user_id: str, project_data: dict):
         if not self.client: return None

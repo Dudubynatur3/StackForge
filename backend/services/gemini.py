@@ -130,40 +130,24 @@ class GeminiService:
 
     async def generate_implementation_plan(self, project_title: str, project_description: str = None, tech_stack: str = None):
         """
-        Generates a complete step-by-step implementation plan for a given project.
+        Generates an ELITE step-by-step implementation plan for a given project.
         """
         prompt = f"""
-        You are an expert Cloud and DevOps Platform Engineer.
-        Generate a complete, professional, and technical implementation plan for the following project:
+        You are an Elite Staff Platform Engineer at a Tier-1 tech company (Google, Netflix, Stripe). 
+        Your task is to provide a 'Gold-Standard' implementation plan that would pass a rigorous architecture review.
         
-        Project Title: {project_title}
-        Description: {project_description if project_description else 'No specific description provided.'}
-        Tech Stack: {tech_stack if tech_stack else 'No specific tech stack provided.'}
+        Project: {project_title}
+        Context: {project_description if project_description else 'Standard production deployment.'}
+        Tech: {tech_stack if tech_stack else 'Best-in-class DevOps tools.'}
 
-        The implementation plan MUST include:
-        1. Architecture Overview: A clear description of how the system is designed.
-        2. File Structure: A recommended project directory and file layout.
-        3. Implementation Steps: A detailed step-by-step guide from setup to deployment.
-        4. Commands: Actual shell/terminal commands to run for setup, infrastructure, and deployment.
-        5. Verification Steps: How to test and verify each stage works.
+        The plan MUST include:
+        1. Architecture Overview: Use high-level design principles (Scalability, Security, Observability).
+        2. Production-Ready File Structure: Organize for scale, modularity, and CI/CD compatibility.
+        3. Implementation Steps: Deep technical actions, avoiding generic fluff. 
+        4. Expert Commands: Complex, real-world CLI examples (e.g., advanced Terraform providers, K8s operators, Helm charts).
+        5. Verification: Comprehensive testing strategies (Unit, Integration, E2E, Load Testing).
 
-        Format the output as a clean JSON object with these keys: 
-        'architecture', 'file_structure', 'steps', 'verification_steps'.
-        The 'steps' key should be a list of objects, each with 'phase', 'action', and 'command'.
-
-        Example Format:
-        {{
-            "architecture": "A serverless application using AWS Lambda and API Gateway...",
-            "file_structure": "project/\\n├── src/\\n├── infra/\\n└── README.md",
-            "steps": [
-                {{
-                    "phase": "Infrastructure Setup",
-                    "action": "Initialize Terraform and apply the plan.",
-                    "command": "terraform init && terraform apply"
-                }}
-            ],
-            "verification_steps": ["Verify the API endpoint returns a 200 OK."]
-        }}
+        Format as JSON with keys: 'architecture', 'file_structure', 'steps', 'verification_steps'.
         """
         
         try:
