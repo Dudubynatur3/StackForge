@@ -1,67 +1,57 @@
 # StackForge 🚀
+### Build the Portfolio That Gets You Hired.
 
-**StackForge** is a precision-engineered platform for Cloud and DevOps engineers. It bridges the gap between the jobs you want and the portfolio you've built by using AI to analyse job descriptions and recommend high-impact, tailored projects.
-
----
-
-## ✨ Features
-
-- **🔍 Job Description Analyser**: Extract required skills, tools, and project gaps from any Cloud/DevOps job posting.
-- **🎯 Project Recommender**: Get 3-5 ranked project recommendations that specifically target the skills employers are looking for.
-- **🛠️ Implementation Plan Generator**: Receive step-by-step guides, including architecture, file structures, and verification commands.
-- **🚀 Project Upgrader**: Get professional advice on how to turn your existing projects into production-grade portfolio pieces.
+**Live Demo**: [https://stack-forge-xi.vercel.app](https://stack-forge-xi.vercel.app)  
+**Backend API**: [https://stackforge-backend.onrender.com](https://stackforge-backend.onrender.com)
 
 ---
 
-## 🛠️ Tech Stack
+## 📌 The Problem Statement
+Cloud and DevOps engineering is a highly competitive field. Many aspiring engineers build generic projects (like simple static websites or basic Dockerfiles) that don't demonstrate the advanced skills top tech companies require — such as Infrastructure as Code (IaC), CI/CD automation, security hardening, and observability. 
 
-- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS
-- **Backend**: Python FastAPI
-- **AI Layer**: Google Gemini API (gemini-1.5-flash-lite)
-- **Database/Auth**: Supabase (PostgreSQL & Google OAuth)
-- **Infrastructure**: Terraform (GCP) & Render (Backend)
-- **CI/CD**: GitHub Actions
+There is a **"Gap"** between the skills listed in job descriptions and the projects candidates show in their portfolios.
+
+## ✨ The Solution: StackForge
+StackForge is a precision-engineered platform that uses AI to bridge this gap. It turns any job description into an actionable, technical roadmap for portfolio development.
+
+### The Four Pillars of StackForge:
+1.  **🔍 Job Description Analyser**: Instantly extracts required skills, preferred tools, and identifies the "project gaps" in your current profile.
+2.  **🎯 Project Recommender**: Generates 3-5 high-impact projects tailored specifically to the role you want, ranked by their impact on a hiring manager.
+3.  **🛠️ Implementation Plan Generator**: Provides complete technical blueprints including architecture diagrams, directory structures, and the exact CLI commands needed to build.
+4.  **🚀 Project Upgrader**: Analyzes your existing work and provides a "Senior Engineer's Checklist" to upgrade it to production-grade quality.
+
+---
+
+## 🛠️ Technical Architecture
+
+### Frontend
+- **Framework**: Next.js 14 (App Router)
+- **Styling**: Tailwind CSS (Modern, Dark Mode first)
+- **Auth**: Supabase Auth (Google OAuth)
+- **State Management**: React Context API
+
+### Backend
+- **Framework**: Python FastAPI
+- **AI Engine**: Google Gemini 1.5 Flash
+- **Database**: Supabase (PostgreSQL)
+- **Deployment**: Render (Web Service)
+
+### Infrastructure & DevOps
+- **IaC**: Terraform (GCP configuration ready)
+- **CI/CD**: GitHub Actions (Automated deployments to Render/Vercel)
+- **Security**: Supabase Row Level Security (RLS), Environment Variable Protection.
 
 ---
 
 ## 📂 Project Structure
-
-```text
-stackforge/
-├── backend/            # FastAPI Backend
-│   ├── routers/        # API Endpoints
-│   ├── services/       # AI & DB Logic
-│   └── models/         # Pydantic Schemas
-├── frontend/           # Next.js Frontend
-│   ├── app/            # App Router Pages
-│   ├── components/     # UI Components
-│   └── lib/            # API Utilities
-├── infrastructure/     # Terraform IaC
-└── .github/            # CI/CD Workflows
-```
-
----
-
-## 🚀 Quick Start
-
-### Backend Setup
-1. `cd backend`
-2. `pip install -r requirements.txt`
-3. Create a `.env` file with `GOOGLE_API_KEY`, `SUPABASE_URL`, and `SUPABASE_KEY`.
-4. `uvicorn main:app --reload`
-
-### Frontend Setup
-1. `cd frontend`
-2. `npm install`
-3. Create a `.env.local` with `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SUPABASE_URL`, and `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-4. `npm run dev`
-
----
-
-## 📄 License
-This project is for educational and portfolio purposes. Built as part of the StackForge Engineering Brief.
+- `backend/`: FastAPI logic and AI prompt engineering.
+- `frontend/`: Next.js UI and client-side integration.
+- `infrastructure/`: Multi-cloud Terraform definitions and SQL schemas.
+- `.github/`: Automated workflows for continuous delivery.
 
 ---
 
 ## 👨‍💻 Author
-**Akintade** - Senior DevSecOps & Platform Engineer
+**Akintade** — Senior DevSecOps & Platform Engineer
+
+Built with the vision of empowering the next generation of Cloud and Platform Engineers.
