@@ -18,6 +18,58 @@ class GeminiService:
         self.model_name = "gemini-flash-lite-latest"
         self.model = genai.GenerativeModel(self.model_name)
 
+    async def analyse_job_description(self, jd_text: str):
+        """
+        Analyses a cloud/DevOps job description to extract:
+        - Required skills
+        - Preferred skills
+        - Tools and technologies
+        - Recommended projects
+        """
+        prompt = f"""
+        You are an expert Cloud and DevOps Platform Engineer and technical recruiter.
+        Analyse the following job description and break it down into four specific categories:
+        1. Required Skills: Fundamental skills mentioned as mandatory.
+        2. Preferred Skills: Nice-to-have skills or advanced qualifications.
+        3. Tools & Technologies: Specific software, cloud providers, and platforms mentioned.
+        4. Recommended Projects: Based on this JD, suggest 3-5 high-impact projects a candidate should build to prove their competence. 
+           For each project, provide a title, a one-sentence 'why it matches', the tech stack it covers, estimated build time, and difficulty level.
+
+        Format the output as a JSON object with these keys: 
+        "required_skills", "preferred_skills", "tools_technologies", "recommended_projects".
+        Each value should be a list of strings, except "recommended_projects" which should be a list of objects.
+
+        Example Format:
+        {{
+            "required_skills": ["Linux", "Docker"],
+            "preferred_skills": ["Kubernetes", "Terraform"],
+            "tools_technologies": ["AWS", "GCP", "Ansible"],
+            "recommended_projects": [
+                {{
+                    "title": "Project Name",
+                    "why": "Explanation",
+                    "stack": "Stack used",
+                    "time": "Estimated time",
+                    "difficulty": "Level"
+                }}
+            ]
+        }}
+
+        Job Description:
+        {jd_text}
+        """
+        
+        try:
+            response = self.model.generate_content(
+                prompt,
+                generation_config={"response_mime_type": "application/json"}
+            )
+            return json.loads(response.text)
+        except json.JSONDecodeError as jde:
+            return {"error": f"Failed to parse JSON from AI response: {str(jde)}", "raw": response.text}
+        except Exception as e:
+            return {"error": str(e)}
+
     async def recommend_projects(self, jd_text: str, current_skills: list = None):
         """
         Based on the job description and user's current skills, recommends 3-5
