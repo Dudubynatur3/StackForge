@@ -1,24 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Bulletproof variable loading
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Accessing directly from process.env with the NEXT_PUBLIC_ prefix
+// This is the most standard way for Next.js to expose variables to the browser
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// Log configuration status to browser console (safe for non-secrets)
-if (typeof window !== 'undefined') {
-  console.log('--- StackForge Auth Status ---');
-  console.log('Supabase URL Configured:', !!supabaseUrl);
-  console.log('Supabase Key Configured:', !!supabaseAnonKey);
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('CRITICAL: Supabase environment variables are missing from Vercel settings.');
-  }
-  console.log('------------------------------');
-}
-
-// Initialize with fallbacks to prevent crash, but AuthContext will handle the 'real' failure
+// No more placeholders or logic that can hide the error
+// If these are missing, createClient will throw a very specific error we can see
 export const supabase = createClient(
-  supabaseUrl || 'https://missing-url.supabase.co', 
-  supabaseAnonKey || 'missing-key'
+  url as string, 
+  key as string
 );
 
-export const isSupabaseConfigured = !!supabaseUrl && !!supabaseAnonKey;
+export const isSupabaseConfigured = !!url && !!key;
