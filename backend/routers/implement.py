@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from backend.models.job import ImplementationPlanRequest
-from backend.services.gemini import gemini_service
-from backend.services.supabase_service import supabase_service
+from backend.services import gemini_service, supabase_service
 
 router = APIRouter(
     prefix="/implement",

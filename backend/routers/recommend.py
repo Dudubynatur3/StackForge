@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from backend.models.job import ProjectRecommendationRequest
-from backend.services.gemini import gemini_service
+from backend.services import gemini_service
 
 router = APIRouter(
     prefix="/recommend",
