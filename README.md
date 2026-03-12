@@ -1,57 +1,93 @@
 # StackForge 🚀
-### Build the Portfolio That Gets You Hired.
+### Bridging the Gap Between Engineering Skills and Career Success.
 
-**Live Demo**: [https://stack-forge-xi.vercel.app](https://stack-forge-xi.vercel.app)  
+**Live Application**: [https://stack-forge-xi.vercel.app](https://stack-forge-xi.vercel.app)  
 **Backend API**: [https://stackforge-backend.onrender.com](https://stackforge-backend.onrender.com)
 
 ---
 
-## 📌 The Problem Statement
-Cloud and DevOps engineering is a highly competitive field. Many aspiring engineers build generic projects (like simple static websites or basic Dockerfiles) that don't demonstrate the advanced skills top tech companies require — such as Infrastructure as Code (IaC), CI/CD automation, security hardening, and observability. 
+## 📌 Mission Statement
+The modern Cloud and DevOps job market is intensely competitive. Candidates often struggle to demonstrate the specific, production-grade skills required by top-tier tech companies. **StackForge** leverages Artificial Intelligence to deconstruct job descriptions and provide a technical roadmap for building high-impact, portfolio-worthy projects.
 
-There is a **"Gap"** between the skills listed in job descriptions and the projects candidates show in their portfolios.
+## ✨ Core Features
 
-## ✨ The Solution: StackForge
-StackForge is a precision-engineered platform that uses AI to bridge this gap. It turns any job description into an actionable, technical roadmap for portfolio development.
+### 🔍 Job Description Analyser
+Deconstructs any job posting to identify mandatory skills, preferred tools, and "project gaps" in your current profile.
 
-### The Four Pillars of StackForge:
-1.  **🔍 Job Description Analyser**: Instantly extracts required skills, preferred tools, and identifies the "project gaps" in your current profile.
-2.  **🎯 Project Recommender**: Generates 3-5 high-impact projects tailored specifically to the role you want, ranked by their impact on a hiring manager.
-3.  **🛠️ Implementation Plan Generator**: Provides complete technical blueprints including architecture diagrams, directory structures, and the exact CLI commands needed to build.
-4.  **🚀 Project Upgrader**: Analyzes your existing work and provides a "Senior Engineer's Checklist" to upgrade it to production-grade quality.
+### 🎯 Strategic Project Recommender
+Generates 3-5 specific project ideas tailored to your target role, ranked by their ROI for hiring managers.
+
+### 🛠️ One-Click Implementation Blueprints
+Provides complete technical blueprints—architecture designs, production-ready file structures, and exact CLI commands (Terraform, Docker, Kubectl)—with a single click.
+
+### 🚀 Production-Grade Upgrader
+Critiques existing work against a "Senior Engineer's Checklist" to move projects from student-grade to production-grade quality.
 
 ---
 
 ## 🛠️ Technical Architecture
 
-### Frontend
+### **Frontend**
 - **Framework**: Next.js 14 (App Router)
-- **Styling**: Tailwind CSS (Modern, Dark Mode first)
-- **Auth**: Supabase Auth (Google OAuth)
-- **State Management**: React Context API
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS (Dark Mode Optimized)
+- **Authentication**: Supabase Auth (Google OAuth)
+- **Deployment**: Vercel
 
-### Backend
+### **Backend**
 - **Framework**: Python FastAPI
-- **AI Engine**: Google Gemini 1.5 Flash
+- **AI Engine**: Google Gemini 1.5 Flash (Advanced Prompt Engineering)
 - **Database**: Supabase (PostgreSQL)
-- **Deployment**: Render (Web Service)
+- **Orchestration**: Render
 
-### Infrastructure & DevOps
-- **IaC**: Terraform (GCP configuration ready)
-- **CI/CD**: GitHub Actions (Automated deployments to Render/Vercel)
-- **Security**: Supabase Row Level Security (RLS), Environment Variable Protection.
+### **DevOps & Security**
+- **CI/CD**: GitHub Actions (Automated multi-stage pipelines)
+- **Database Security**: Row Level Security (RLS) & PL/pgSQL Triggers
+- **Monitoring**: IP-based rate limiting & Tiered Quotas
 
 ---
 
 ## 📂 Project Structure
-- `backend/`: FastAPI logic and AI prompt engineering.
-- `frontend/`: Next.js UI and client-side integration.
-- `infrastructure/`: Multi-cloud Terraform definitions and SQL schemas.
-- `.github/`: Automated workflows for continuous delivery.
+
+```text
+stackforge/
+├── backend/            # FastAPI REST API & AI Service Logic
+│   ├── routers/        # Feature-based API endpoints
+│   ├── services/       # Core AI (Gemini) & Database logic
+│   └── models/         # Pydantic schemas for request/response
+├── frontend/           # Next.js 14 Web Application
+│   ├── src/app/        # App Router pages and layouts
+│   ├── components/     # Reusable React components
+│   └── lib/            # API clients & state management
+├── database/           # SQL schemas & migrations
+├── .github/            # GitHub Actions CI/CD workflows
+└── render.yaml         # Render deployment blueprint
+```
+
+---
+
+## 🚀 Getting Started
+
+### Local Development
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Dudubynatur3/StackForge.git
+   ```
+
+2. **Backend Setup**:
+   - Install dependencies: `pip install -r backend/requirements.txt`
+   - Configure `.env` with `GOOGLE_API_KEY`, `SUPABASE_URL`, and `SUPABASE_KEY`.
+   - Run: `uvicorn backend.main:app --reload`
+
+3. **Frontend Setup**:
+   - Install dependencies: `cd frontend && npm install`
+   - Configure `.env.local` with `NEXT_PUBLIC_API_URL` and Supabase keys.
+   - Run: `npm run dev`
 
 ---
 
 ## 👨‍💻 Author
 **Akintade** — Senior DevSecOps & Platform Engineer
 
-Built with the vision of empowering the next generation of Cloud and Platform Engineers.
+Built with the vision of empowering Cloud Engineers to build better, faster, and smarter.

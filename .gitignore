@@ -1,13 +1,39 @@
+# Environments
 .env
-*.env
 .env.*
-GEMINI.md
-node_modules/
+*.env
+.venv/
+venv/
+ENV/
+env/
+
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/next-env.d.ts
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tools
 .terraform/
 *.tfstate
 *.tfstate.backup
-*.tfvars
-!*.tfvars.example
-.DS_Store
+.vercel/
+
+# Project Specific
+GEMINI.md
+*.PNG
+*.jpeg
+*.jpg
+infrastructure/
