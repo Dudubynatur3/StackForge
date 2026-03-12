@@ -15,16 +15,36 @@ function ImplementForm() {
   const [error, setError] = useState<string | null>(null);
   const [plan, setPlan] = useState<any>(null);
 
-  // Auto-fill if coming from Analyse page
+  // Auto-fill and AUTO-TRIGGER if coming from Analyse page
   useEffect(() => {
     const title = searchParams.get('title');
     const stack = searchParams.get('stack');
     const desc = searchParams.get('desc');
 
-    if (title) setProjectTitle(title);
-    if (stack) setTechStack(stack);
-    if (desc) setProjectDescription(desc);
+    if (title) {
+      setProjectTitle(title);
+      const s = stack || '';
+      const d = desc || '';
+      setTechStack(s);
+      setProjectDescription(d);
+      
+      // Trigger the generation automatically
+      autoGenerate(title, d, s);
+    }
   }, [searchParams]);
+
+  const autoGenerate = async (t: string, d: string, s: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await generateImplementationPlan(t, d, s, user?.id);
+      setPlan(data.implementation_plan);
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
