@@ -135,7 +135,7 @@ function ImplementForm() {
           disabled={loading || !projectTitle.trim()}
           className="w-full md:w-auto px-12 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 rounded-lg text-lg font-bold transition-all shadow-lg"
         >
-          {loading ? 'Generating Plan...' : 'Generate Implementation Plan'}
+          {loading ? 'Architecting Elite Plan (this can take 30s)...' : 'Generate Implementation Plan'}
         </button>
       </form>
 

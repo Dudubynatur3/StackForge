@@ -45,25 +45,39 @@ export async function recommendProjects(jdText: string, currentSkills?: string[]
 }
 
 export async function generateImplementationPlan(projectTitle: string, projectDescription?: string, techStack?: string, userId?: string) {
-  const response = await fetch(`${API_BASE_URL}/implement/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ 
-      project_title: projectTitle, 
-      project_description: projectDescription,
-      tech_stack: techStack,
-      user_id: userId
-    }),
-  });
+  // Increased timeout for complex elite plans
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), 60000); // 60 seconds
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.detail || 'Failed to generate implementation plan');
+  try {
+    const response = await fetch(`${API_BASE_URL}/implement/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        project_title: projectTitle, 
+        project_description: projectDescription,
+        tech_stack: techStack,
+        user_id: userId
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(id);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || 'Failed to generate implementation plan');
+    }
+
+    return response.json();
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      throw new Error('The AI is taking a while to architect your elite plan. Please refresh and try again in 30 seconds.');
+    }
+    throw error;
   }
-
-  return response.json();
 }
 
 export async function generateUpgradeAdvice(projectDescription: string, currentTechStack?: string) {
