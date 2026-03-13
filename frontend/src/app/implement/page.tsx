@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import { useState, useEffect, useCallback, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { generateImplementationPlan } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 
 function ImplementForm() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const searchParams = useSearchParams();
   const [projectTitle, setProjectTitle] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
@@ -14,15 +14,29 @@ function ImplementForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [plan, setPlan] = useState<any>(null);
+  
+  // Ref to prevent double-triggering in React StrictMode
+  const hasTriggered = useRef(false);
 
   const autoGenerate = useCallback(async (t: string, d: string, s: string) => {
+    if (hasTriggered.current) return;
+    hasTriggered.current = true;
+
     setLoading(true);
     setError(null);
     try {
+      // Use a small delay to ensure auth state is settled if possible
       const data = await generateImplementationPlan(t, d, s, user?.id);
-      setPlan(data.implementation_plan);
+      
+      if (data && data.implementation_plan) {
+        setPlan(data.implementation_plan);
+      } else {
+        throw new Error("AI returned an empty plan. Please try again.");
+      }
     } catch (err: any) {
+      console.error("AutoGenerate Error:", err);
       setError(err.message || 'An unexpected error occurred.');
+      hasTriggered.current = false; // Allow retry on error
     } finally {
       setLoading(false);
     }
@@ -30,21 +44,28 @@ function ImplementForm() {
 
   // Auto-fill and AUTO-TRIGGER if coming from Analyse page
   useEffect(() => {
+    // Wait for auth to at least attempt loading
+    if (authLoading) return;
+
     const title = searchParams.get('title');
     const stack = searchParams.get('stack');
     const desc = searchParams.get('desc');
 
-    if (title) {
+    if (title && !hasTriggered.current) {
       setProjectTitle(title);
       const s = stack || '';
       const d = desc || '';
       setTechStack(s);
       setProjectDescription(d);
       
-      // Trigger the generation automatically
-      autoGenerate(title, d, s);
+      // Small timeout to ensure state updates are processed
+      const timer = setTimeout(() => {
+        autoGenerate(title, d, s);
+      }, 500);
+      
+      return () => clearTimeout(timer);
     }
-  }, [searchParams, autoGenerate]);
+  }, [searchParams, autoGenerate, authLoading]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -56,7 +77,11 @@ function ImplementForm() {
 
     try {
       const data = await generateImplementationPlan(projectTitle, projectDescription, techStack, user?.id);
-      setPlan(data.implementation_plan);
+      if (data && data.implementation_plan) {
+        setPlan(data.implementation_plan);
+      } else {
+        throw new Error("Could not generate plan. Please refine your description.");
+      }
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred.');
     } finally {
@@ -125,14 +150,14 @@ function ImplementForm() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <section className="lg:col-span-2 p-10 border border-gray-800 rounded-3xl bg-zinc-900/60 h-fit">
               <h2 className="text-2xl font-bold mb-6 text-blue-400">Architecture Decisions</h2>
-              <p className="text-gray-300 leading-relaxed text-lg">
-                {plan.architecture}
-              </p>
+              <div className="text-gray-300 leading-relaxed text-lg whitespace-pre-wrap">
+                {plan.architecture || 'No architecture details provided.'}
+              </div>
             </section>
             <section className="p-10 border border-gray-800 rounded-3xl bg-zinc-900/40 h-fit">
               <h2 className="text-2xl font-bold mb-6 text-blue-400">File Structure</h2>
               <pre className="text-sm font-mono text-gray-300 bg-black p-6 rounded-2xl border border-gray-800 overflow-x-auto">
-                {plan.file_structure}
+                {plan.file_structure || 'Project root\n└── No files listed'}
               </pre>
             </section>
           </div>
@@ -157,7 +182,7 @@ function ImplementForm() {
                     </div>
                   )}
                 </div>
-              )) : <div className="text-center py-10 text-gray-500">Plan steps could not be formatted. Please try again.</div>}
+              )) : <div className="text-center py-10 text-gray-500 italic">No specific steps were generated for this plan.</div>}
             </div>
           </section>
 
@@ -171,7 +196,7 @@ function ImplementForm() {
                   </span>
                   {v}
                 </li>
-              )) : <li className="text-gray-500 italic">No verification steps available</li>}
+              )) : <li className="text-gray-500 italic">No specific verification steps identified.</li>}
             </ul>
           </section>
         </div>
@@ -182,7 +207,7 @@ function ImplementForm() {
 
 export default function ImplementPage() {
   return (
-    <Suspense fallback={<div className="p-20 text-center">Loading...</div>}>
+    <Suspense fallback={<div className="p-20 text-center text-white">Loading Implementation Builder...</div>}>
       <ImplementForm />
     </Suspense>
   );
