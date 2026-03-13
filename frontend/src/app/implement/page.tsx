@@ -44,7 +44,7 @@ function ImplementForm() {
 
   // Auto-fill and AUTO-TRIGGER if coming from Analyse page
   useEffect(() => {
-    // Wait for auth to at least attempt loading
+    // Wait for auth to finish loading before we try anything
     if (authLoading) return;
 
     const title = searchParams.get('title');
@@ -58,14 +58,20 @@ function ImplementForm() {
       setTechStack(s);
       setProjectDescription(d);
       
-      // Small timeout to ensure state updates are processed
+      // IMPORTANT: Ensure we have a user ID if we're trying to use autogenerate
+      // If user is not logged in yet, we'll wait or show a message
+      if (!user) {
+        setError("You must be signed in to generate an implementation plan. Please sign in and try again.");
+        return;
+      }
+
       const timer = setTimeout(() => {
         autoGenerate(title, d, s);
       }, 500);
       
       return () => clearTimeout(timer);
     }
-  }, [searchParams, autoGenerate, authLoading]);
+  }, [searchParams, autoGenerate, authLoading, user]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -140,8 +146,23 @@ function ImplementForm() {
       </form>
 
       {error && (
-        <div className="p-6 border border-red-900 bg-red-900/10 text-red-500 rounded-xl mb-12">
-          {error}
+        <div className="p-8 border-2 border-red-900/50 bg-red-900/10 text-red-400 rounded-3xl mb-12 text-center">
+          <h2 className="text-xl font-bold mb-2">Architecting Failed</h2>
+          <p className="opacity-80">{error}</p>
+          <div className="mt-6 flex justify-center gap-4">
+            <button 
+              onClick={() => window.location.reload()}
+              className="px-6 py-2 bg-red-900/20 border border-red-900/30 rounded-xl hover:bg-red-900/40 transition-all text-sm font-bold"
+            >
+              Refresh Page
+            </button>
+            <Link 
+              href="/dashboard"
+              className="px-6 py-2 bg-zinc-900 border border-gray-800 rounded-xl hover:bg-zinc-800 transition-all text-sm font-bold"
+            >
+              Go to Dashboard
+            </Link>
+          </div>
         </div>
       )}
 
