@@ -18,6 +18,27 @@ class GeminiService:
         self.model_name = "gemini-flash-lite-latest"
         self.model = genai.GenerativeModel(self.model_name)
 
+    def _parse_ai_json(self, raw_text: str):
+        """
+        Cleans and parses JSON from AI response, removing markdown code blocks if present.
+        """
+        cleaned_text = raw_text.strip()
+        if cleaned_text.startswith("```"):
+            # Remove start block (e.g., ```json)
+            lines = cleaned_text.split("\n")
+            if lines[0].startswith("```"):
+                lines = lines[1:]
+            # Remove end block (```)
+            if lines[-1].strip() == "```":
+                lines = lines[:-1]
+            cleaned_text = "\n".join(lines).strip()
+        
+        try:
+            return json.loads(cleaned_text)
+        except json.JSONDecodeError as jde:
+            print(f"GeminiService: JSON Decode Error. Raw: {raw_text[:100]}...")
+            return {"error": f"Failed to parse AI response: {str(jde)}", "raw": raw_text}
+
     async def analyse_job_description(self, jd_text: str):
         """
         Analyses a cloud/DevOps job description to extract:
@@ -41,22 +62,6 @@ class GeminiService:
         "required_skills", "preferred_skills", "tools_technologies", "recommended_projects".
         Each value should be a list of strings, except "recommended_projects" which should be a list of objects.
 
-        Example Format:
-        {{
-            "required_skills": ["Linux", "Docker"],
-            "preferred_skills": ["Kubernetes", "Terraform"],
-            "tools_technologies": ["AWS", "GCP", "Ansible"],
-            "recommended_projects": [
-                {{
-                    "title": "Project Name",
-                    "why": "Explanation",
-                    "stack": "Stack used",
-                    "time": "Estimated time",
-                    "difficulty": "Level"
-                }}
-            ]
-        }}
-
         Job Description:
         {jd_text}
         """
@@ -68,10 +73,7 @@ class GeminiService:
                 generation_config={"response_mime_type": "application/json"}
             )
             print("GeminiService: Response received successfully")
-            return json.loads(response.text)
-        except json.JSONDecodeError as jde:
-            print(f"GeminiService: JSON Error: {str(jde)}")
-            return {"error": f"Failed to parse JSON from AI response: {str(jde)}", "raw": response.text}
+            return self._parse_ai_json(response.text)
         except Exception as e:
             print(f"GeminiService: General Error: {str(e)}")
             return {"error": str(e)}
@@ -89,29 +91,8 @@ class GeminiService:
         
         Context: {skills_context}
 
-        For each recommendation, include:
-        1. Title
-        2. Impact: Why this specific project matches the job and why it's high impact.
-        3. Tech Stack: The tools and technologies covered.
-        4. Estimated Build Time: A realistic timeframe (e.g., 2 weeks).
-        5. Difficulty Level: Beginner, Intermediate, or Advanced.
-
         Rank these projects from highest to lowest impact.
-
         Format the output as a JSON object with a single key 'recommendations' which is a list of project objects.
-
-        Example Format:
-        {{
-            "recommendations": [
-                {{
-                    "title": "Project Name",
-                    "impact": "Explanation of ranking and match",
-                    "stack": "Stack used",
-                    "time": "Estimated time",
-                    "difficulty": "Level"
-                }}
-            ]
-        }}
 
         Job Description:
         {jd_text}
@@ -122,9 +103,7 @@ class GeminiService:
                 prompt,
                 generation_config={"response_mime_type": "application/json"}
             )
-            return json.loads(response.text)
-        except json.JSONDecodeError as jde:
-            return {"error": f"Failed to parse JSON from AI response: {str(jde)}", "raw": response.text}
+            return self._parse_ai_json(response.text)
         except Exception as e:
             return {"error": str(e)}
 
@@ -133,19 +112,12 @@ class GeminiService:
         Generates an ELITE step-by-step implementation plan for a given project.
         """
         prompt = f"""
-        You are an Elite Staff Platform Engineer at a Tier-1 tech company (Google, Netflix, Stripe). 
-        Your task is to provide a 'Gold-Standard' implementation plan that would pass a rigorous architecture review.
+        You are an Elite Staff Platform Engineer at a Tier-1 tech company. 
+        Provide a 'Gold-Standard' implementation plan for:
         
         Project: {project_title}
         Context: {project_description if project_description else 'Standard production deployment.'}
         Tech: {tech_stack if tech_stack else 'Best-in-class DevOps tools.'}
-
-        The plan MUST include:
-        1. Architecture Overview: Use high-level design principles (Scalability, Security, Observability).
-        2. Production-Ready File Structure: Organize for scale, modularity, and CI/CD compatibility.
-        3. Implementation Steps: Deep technical actions, avoiding generic fluff. 
-        4. Expert Commands: Complex, real-world CLI examples (e.g., advanced Terraform providers, K8s operators, Helm charts).
-        5. Verification: Comprehensive testing strategies (Unit, Integration, E2E, Load Testing).
 
         Format as JSON with keys: 'architecture', 'file_structure', 'steps', 'verification_steps'.
         """
@@ -155,9 +127,7 @@ class GeminiService:
                 prompt,
                 generation_config={"response_mime_type": "application/json"}
             )
-            return json.loads(response.text)
-        except json.JSONDecodeError as jde:
-            return {"error": f"Failed to parse JSON from AI response: {str(jde)}", "raw": response.text}
+            return self._parse_ai_json(response.text)
         except Exception as e:
             return {"error": str(e)}
 
@@ -167,26 +137,12 @@ class GeminiService:
         """
         prompt = f"""
         You are a senior Platform Engineer.
-        Analyse the following existing project and explain how to upgrade it to production grade.
+        Analyse the following project and explain how to upgrade it to production grade.
         
         Project Description: {project_description}
         Current Tech Stack: {current_tech_stack if current_tech_stack else 'No specific tech stack provided.'}
 
-        Your advice should focus on:
-        1. Missing Production Features (e.g., monitoring, security, HA, etc.)
-        2. What a Senior Engineer would add to make it stand out.
-        3. A step-by-step upgrade plan.
-
-        Format the output as a clean JSON object with these keys: 
-        'analysis', 'senior_additions', 'upgrade_steps'.
-        Each value should be a list of strings.
-
-        Example Format:
-        {{
-            "analysis": ["Add centralized logging...", "Implement secrets management..."],
-            "senior_additions": ["Introduce a Service Mesh...", "Add SLO/SLI dashboards..."],
-            "upgrade_steps": ["Step 1: Set up Prometheus...", "Step 2: Migrate to Vault..."]
-        }}
+        Format as JSON with keys: 'analysis', 'senior_additions', 'upgrade_steps'.
         """
         
         try:
@@ -194,9 +150,7 @@ class GeminiService:
                 prompt,
                 generation_config={"response_mime_type": "application/json"}
             )
-            return json.loads(response.text)
-        except json.JSONDecodeError as jde:
-            return {"error": f"Failed to parse JSON from AI response: {str(jde)}", "raw": response.text}
+            return self._parse_ai_json(response.text)
         except Exception as e:
             return {"error": str(e)}
 
