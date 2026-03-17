@@ -1,0 +1,8 @@
+{
+  "buildCommand": "cd frontend && npm run build",
+  "installCommand": "cd frontend && npm install",
+  "framework": "nextjs",
+  "outputDirectory": "frontend/.next",
+  "regions": ["cle1"],
+  "trailingSlash": false
+}
