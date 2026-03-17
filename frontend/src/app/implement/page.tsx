@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useCallback, Suspense, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { generateImplementationPlan } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 
 function ImplementForm() {
   const { user, loading: authLoading } = useAuth();
   const searchParams = useSearchParams();
+  const [isMounted, setIsMounted] = useState(false);
   const [projectTitle, setProjectTitle] = useState('');
   const [projectDescription, setProjectDescription] = useState('');
   const [techStack, setTechStack] = useState('');
@@ -15,6 +17,11 @@ function ImplementForm() {
   const [error, setError] = useState<string | null>(null);
   const [plan, setPlan] = useState<any>(null);
   
+  // Set mounted state
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Ref to prevent double-triggering in React StrictMode
   const hasTriggered = useRef(false);
 
@@ -44,8 +51,8 @@ function ImplementForm() {
 
   // Auto-fill and AUTO-TRIGGER if coming from Analyse page
   useEffect(() => {
-    // Wait for auth to finish loading before we try anything
-    if (authLoading) return;
+    // Wait for auth and mounting to finish
+    if (!isMounted || authLoading) return;
 
     const title = searchParams.get('title');
     const stack = searchParams.get('stack');
@@ -58,8 +65,6 @@ function ImplementForm() {
       setTechStack(s);
       setProjectDescription(d);
       
-      // IMPORTANT: Ensure we have a user ID if we're trying to use autogenerate
-      // If user is not logged in yet, we'll wait or show a message
       if (!user) {
         setError("You must be signed in to generate an implementation plan. Please sign in and try again.");
         return;
@@ -71,7 +76,9 @@ function ImplementForm() {
       
       return () => clearTimeout(timer);
     }
-  }, [searchParams, autoGenerate, authLoading, user]);
+  }, [searchParams, autoGenerate, authLoading, user, isMounted]);
+
+  if (!isMounted) return <div className="p-20 text-center text-white">Initializing...</div>;
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -170,30 +177,34 @@ function ImplementForm() {
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <section className="lg:col-span-2 p-10 border border-gray-800 rounded-3xl bg-zinc-900/60 h-fit">
-              <h2 className="text-2xl font-bold mb-6 text-blue-400">Architecture Decisions</h2>
+              <h2 className="text-2xl font-bold mb-6 text-blue-400">Architecture Overview</h2>
               <div className="text-gray-300 leading-relaxed text-lg whitespace-pre-wrap">
-                {plan.architecture || 'No architecture details provided.'}
+                {typeof (plan.architecture_overview || plan.architecture) === 'object' 
+                  ? JSON.stringify(plan.architecture_overview || plan.architecture, null, 2)
+                  : (plan.architecture_overview || plan.architecture || 'No architecture details provided.')}
               </div>
             </section>
             <section className="p-10 border border-gray-800 rounded-3xl bg-zinc-900/40 h-fit">
-              <h2 className="text-2xl font-bold mb-6 text-blue-400">File Structure</h2>
+              <h2 className="text-2xl font-bold mb-6 text-blue-400">Project Structure</h2>
               <pre className="text-sm font-mono text-gray-300 bg-black p-6 rounded-2xl border border-gray-800 overflow-x-auto">
-                {plan.file_structure || 'Project root\n└── No files listed'}
+                {typeof (plan.detailed_file_structure || plan.file_structure) === 'object'
+                  ? JSON.stringify(plan.detailed_file_structure || plan.file_structure, null, 2)
+                  : (plan.detailed_file_structure || plan.file_structure || 'Project root\n└── No files listed')}
               </pre>
             </section>
           </div>
 
           <section className="p-10 border border-gray-800 rounded-3xl bg-zinc-900/40">
-            <h2 className="text-2xl font-bold mb-10 text-blue-400 text-center">Implementation Roadmap</h2>
+            <h2 className="text-2xl font-bold mb-10 text-blue-400 text-center">Elite Implementation Roadmap</h2>
             <div className="space-y-8 max-w-4xl mx-auto">
-              {Array.isArray(plan.steps) ? plan.steps.map((step: any, idx: number) => (
+              {(Array.isArray(plan.step_by_step_plan) || Array.isArray(plan.steps)) ? (plan.step_by_step_plan || plan.steps).map((step: any, idx: number) => (
                 <div key={idx} className="relative pl-12 pb-12 last:pb-0 border-l border-gray-800">
                   <div className="absolute left-[-20px] top-0 w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-900/40">
                     {idx + 1}
                   </div>
                   <div className="mb-4">
-                    <span className="text-xs font-bold uppercase tracking-widest text-blue-500 block mb-2">{step.phase || 'Implementation Phase'}</span>
-                    <h3 className="text-xl font-bold text-white mb-3">{step.action || 'No action description provided'}</h3>
+                    <span className="text-xs font-bold uppercase tracking-widest text-blue-500 block mb-2">{step.phase || step.objective || 'Implementation Phase'}</span>
+                    <h3 className="text-xl font-bold text-white mb-3">{step.action || step.description || step.objective || 'No action description provided'}</h3>
                   </div>
                   {step.command && (
                     <div className="bg-black p-5 rounded-xl border border-gray-800 group relative">
@@ -202,20 +213,25 @@ function ImplementForm() {
                       </code>
                     </div>
                   )}
+                  {step.logic_explanation && (
+                    <p className="mt-4 text-gray-400 text-sm italic">
+                      💡 {step.logic_explanation}
+                    </p>
+                  )}
                 </div>
               )) : <div className="text-center py-10 text-gray-500 italic">No specific steps were generated for this plan.</div>}
             </div>
           </section>
 
           <section className="p-10 border border-gray-800 rounded-3xl bg-blue-900/10 border-blue-900/30">
-            <h2 className="text-2xl font-bold mb-6 text-blue-400">Verification Steps</h2>
+            <h2 className="text-2xl font-bold mb-6 text-blue-400">Verification Checklist</h2>
             <ul className="space-y-4">
-              {Array.isArray(plan.verification_steps) ? plan.verification_steps.map((v: string, idx: number) => (
-                <li key={idx} className="flex items-center gap-4 text-gray-300">
-                  <span className="w-6 h-6 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400 text-xs font-bold border border-blue-600/30">
+              {(Array.isArray(plan.verification_checklist) || Array.isArray(plan.verification_steps)) ? (plan.verification_checklist || plan.verification_steps).map((v: string, idx: number) => (
+                <li key={idx} className="flex items-start gap-4 text-gray-300">
+                  <span className="mt-1 w-6 h-6 rounded-full bg-blue-600/20 flex-shrink-0 flex items-center justify-center text-blue-400 text-xs font-bold border border-blue-600/30">
                     ✓
                   </span>
-                  {v}
+                  <span>{v}</span>
                 </li>
               )) : <li className="text-gray-500 italic">No specific verification steps identified.</li>}
             </ul>

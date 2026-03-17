@@ -1,5 +1,5 @@
-// HARD-CODED TEST (Temporary for Proof of Concept)
-const API_BASE_URL = 'https://stackforge-backend.onrender.com';
+// Production-ready API URL with environment variable fallback
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://stackforge-backend.onrender.com';
 
 export async function analyseJD(jdText: string, userId?: string) {
   const response = await fetch(`${API_BASE_URL}/analyse/`, {

@@ -71,10 +71,10 @@ class SupabaseService:
                 return (count.count or 0) < 3
             
             if feature == "implement":
-                # 1 per month for free tier
+                # 3 per month for free tier to provide high value
                 first_of_month = date.today().replace(day=1).isoformat()
                 count = self.client.table('saved_projects').select('id', count='exact').eq('user_id', user_id).gte('created_at', first_of_month).execute()
-                return (count.count or 0) < 1
+                return (count.count or 0) < 3
 
             return True
         except Exception as e:

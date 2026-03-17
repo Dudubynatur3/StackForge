@@ -109,17 +109,28 @@ class GeminiService:
 
     async def generate_implementation_plan(self, project_title: str, project_description: str = None, tech_stack: str = None):
         """
-        Generates an ELITE step-by-step implementation plan for a given project.
+        Generates an ELITE, hyper-detailed step-by-step implementation plan for a given project.
         """
         prompt = f"""
-        You are an Elite Staff Platform Engineer at a Tier-1 tech company. 
-        Provide a 'Gold-Standard' implementation plan for:
-        
-        Project: {project_title}
-        Context: {project_description if project_description else 'Standard production deployment.'}
-        Tech: {tech_stack if tech_stack else 'Best-in-class DevOps tools.'}
+        You are an Elite Staff Platform Engineer at a Tier-1 tech company (Google/AWS/Meta). 
+        Your task is to provide a 'Gold-Standard' implementation plan that a Cloud Engineer can follow to build a production-grade portfolio project.
 
-        Format as JSON with keys: 'architecture', 'file_structure', 'steps', 'verification_steps'.
+        PROJECT DETAILS:
+        - Project Title: {project_title}
+        - Context/Goal: {project_description if project_description else 'Standard production-grade deployment.'}
+        - Tech Stack: {tech_stack if tech_stack else 'Modern DevOps tools (Terraform, Kubernetes, Docker, CI/CD).'}
+
+        REQUIREMENTS FOR YOUR RESPONSE:
+        1. Architecture: Describe the high-level system design, including networking, security, and data flow.
+        2. File Structure: Provide a complete, nested directory and file structure for the entire project repository.
+        3. Implementation Steps: Provide 5-8 detailed steps. Each step MUST include:
+           - A clear objective.
+           - Specific CLI commands (e.g., terraform init, docker build, kubectl apply).
+           - Key configuration snippets or logic explanations (e.g., 'Ensure the S3 bucket has versioning enabled via HCL').
+        4. Verification: Provide exact commands or tests to verify that each stage is working correctly.
+
+        FORMAT: Return ONLY a valid JSON object with these keys: 
+        'architecture_overview', 'detailed_file_structure', 'step_by_step_plan', 'verification_checklist'.
         """
         
         try:
@@ -136,13 +147,23 @@ class GeminiService:
         Analyses an existing project and explains how to upgrade it to production grade.
         """
         prompt = f"""
-        You are a senior Platform Engineer.
-        Analyse the following project and explain how to upgrade it to production grade.
-        
-        Project Description: {project_description}
-        Current Tech Stack: {current_tech_stack if current_tech_stack else 'No specific tech stack provided.'}
+        You are a Senior Staff Platform Engineer. 
+        Analyze the following project and explain exactly how to upgrade it from a 'student/tutorial grade' to a 'production-grade' system.
 
-        Format as JSON with keys: 'analysis', 'senior_additions', 'upgrade_steps'.
+        PROJECT TO UPGRADE:
+        - Description: {project_description}
+        - Tech Stack: {current_tech_stack if current_tech_stack else 'Standard stack.'}
+
+        YOUR ANALYSIS MUST COVER:
+        1. Security: (IAM, Secrets Management, Encryption, Network Policies).
+        2. Reliability & HA: (Multi-AZ, Load Balancing, Auto-scaling).
+        3. Observability: (Prometheus/Grafana, ELK, SLOs/SLIs).
+        4. Performance & Scalability: (Caching, CDN, Database indexing).
+
+        FORMAT: Return a JSON object with:
+        'current_state_gap_analysis': 'What is missing for production?',
+        'critical_upgrades': 'List of mandatory high-priority changes',
+        'implementation_roadmap': 'Step-by-step guide to applying these upgrades including CLI/Tooling suggestions'.
         """
         
         try:
